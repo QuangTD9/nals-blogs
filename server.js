@@ -1,17 +1,17 @@
-const path = require("path")
 const express = require("express")
 const app = express()
-const publicPath = path.join(__dirname, "..", "public")
-const port = app.listen(process.env.PORT || 3000, function(){
-  console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
-});
 
-app.use(express.static(publicPath))
+const path = require("path")
+const port = process.env.PORT || 5000
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(publicPath, "index.html"))
-})
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static('build'));
+  app.get('*', (req, res) => {
+    req.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+  })
+}
 
-app.listen(port, () => {
-  console.log("Server is up!")
+app.listen(port, (err) => {
+  if(err) return console.log(err)
+  console.log("Server runnig on port: " + port)
 })
